@@ -89,7 +89,15 @@ def getFingerprintImage(portNum, baudRate, outputFileName):
             # Since each received byte contains info for 2 adjacent pixels,
             # assume that both pixels were originally close enough in colour
             # to now be assigned the same colour
-            outFile.write(currByte * 2)
+            first_half = ord(currByte) & 0xF0
+            second_half = ord(currByte) & 0x0F
+            second_half = second_half << 4
+            
+            first_half_byte = first_half.to_bytes(1, 'big')
+            second_half_byte = second_half.to_bytes(1, 'big') 
+            
+            outFile.write(first_half_byte)
+            outFile.write(second_half_byte)
         
         # print anything that's left, until the inter-byte timeout fires
         while currByte:
